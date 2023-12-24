@@ -1,8 +1,8 @@
 use ratatui::widgets::*;
 
-struct ToDoState<T> {
-    items: Vec<T>,
-    state: ListState,
+pub struct ToDoState<T> {
+    pub items: Vec<T>,
+    pub state: ListState,
 }
 
 impl<T> ToDoState<T> {
@@ -45,7 +45,7 @@ impl<T> ToDoState<T> {
 }
 
 pub struct App<'a> {
-    todo: ToDoState<(&'a str, bool)>,
+    pub todo: ToDoState<(&'a str, bool)>,
 }
 
 impl<'a> App<'a> {
