@@ -7,12 +7,16 @@ use ratatui::{
     widgets::*,
 };
 use std::io::stderr;
+
+mod app;
+use crate::app::App;
 fn main() -> Result<()> {
     enable_raw_mode()?;
     execute!(stderr(), EnterAlternateScreen)?;
 
     let mut terminal = Terminal::new(CrosstermBackend::new(stderr()))?;
-
+    let app = App::new();
+    
     loop {
         terminal.draw(|f| {
             f.render_widget(
