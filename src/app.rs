@@ -1,12 +1,14 @@
 use ratatui::widgets::*;
 
-pub struct ToDoState<T> {
-    pub items: Vec<T>,
+pub struct ToDoItem<'a>(pub &'a str, pub bool);
+
+pub struct ToDoState<'a> {
+    pub items: Vec<ToDoItem<'a>>,
     pub state: ListState,
 }
 
-impl<T> ToDoState<T> {
-    fn new(items: Vec<T>) -> Self {
+impl<'a> ToDoState<'a>{
+    fn new(items: Vec<ToDoItem<'a>>) -> Self {
         Self {
             items,
             state: ListState::default(),
@@ -38,23 +40,30 @@ impl<T> ToDoState<T> {
         };
         self.state.select(Some(i));
     }
-
     pub fn unselect(&mut self) {
         self.state.select(None);
+    }
+    pub fn toggle_complete(&mut self) {
+        match self.state.selected() {
+            Some(i) => {
+                self.items[i].1 = !self.items[i].1;
+            }
+            None => {}
+        }
     }
 }
 
 pub struct App<'a> {
-    pub todo: ToDoState<(&'a str, bool)>,
+    pub todo: ToDoState<'a>,
 }
 
 impl<'a> App<'a> {
     pub fn new() -> App<'a> {
         App {
             todo: ToDoState::new(vec![
-                ("Item 1", false),
-                ("Item 2", false),
-                ("Item 3", false),
+                ToDoItem("Item 1", false),
+                ToDoItem("Item 2", false),
+                ToDoItem("Item 3", false),
             ]),
         }
     }

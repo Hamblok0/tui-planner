@@ -42,6 +42,7 @@ fn main() -> Result<()> {
                 if key.kind == crossterm::event::KeyEventKind::Press {
                     match key.code {
                         crossterm::event::KeyCode::Char('q') => break,
+                        crossterm::event::KeyCode::Char('c') => app.todo.toggle_complete(),
                         crossterm::event::KeyCode::Char('j') => app.todo.next(),
                         crossterm::event::KeyCode::Char('k') => app.todo.previous(),
                         _ => {}
