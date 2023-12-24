@@ -45,6 +45,7 @@ fn main() -> Result<()> {
                         crossterm::event::KeyCode::Char('c') => app.todo.toggle_complete(),
                         crossterm::event::KeyCode::Char('j') => app.todo.next(),
                         crossterm::event::KeyCode::Char('k') => app.todo.previous(),
+                        crossterm::event::KeyCode::Char('d') => app.todo.delete_task(),
                         _ => {}
                     }
                 }

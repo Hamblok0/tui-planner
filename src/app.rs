@@ -1,19 +1,20 @@
 use ratatui::widgets::*;
 
-pub struct ToDoItem<'a>(pub &'a str, pub bool);
+pub struct ToDoItem<'a> (pub &'a str, pub bool);
 
 pub struct ToDoState<'a> {
     pub items: Vec<ToDoItem<'a>>,
     pub state: ListState,
 }
 
-impl<'a> ToDoState<'a>{
+impl<'a> ToDoState<'a> {
     fn new(items: Vec<ToDoItem<'a>>) -> Self {
         Self {
             items,
             state: ListState::default(),
         }
     }
+
     pub fn next(&mut self) {
         let i = match self.state.selected() {
             Some(i) => {
@@ -27,6 +28,7 @@ impl<'a> ToDoState<'a>{
         };
         self.state.select(Some(i));
     }
+
     pub fn previous(&mut self) {
         let i = match self.state.selected() {
             Some(i) => {
@@ -40,13 +42,25 @@ impl<'a> ToDoState<'a>{
         };
         self.state.select(Some(i));
     }
+
     pub fn unselect(&mut self) {
         self.state.select(None);
     }
+
     pub fn toggle_complete(&mut self) {
         match self.state.selected() {
             Some(i) => {
                 self.items[i].1 = !self.items[i].1;
+            }
+            None => {}
+        }
+    }
+
+    pub fn delete_task(&mut self) {
+        match self.state.selected() {
+            Some(i) => {
+                self.items.remove(i);
+                self.unselect();
             }
             None => {}
         }
