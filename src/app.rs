@@ -1,14 +1,14 @@
 use ratatui::widgets::*;
 
-pub struct ToDoItem<'a> (pub &'a str, pub bool);
+pub struct ToDoItem (pub String, pub bool);
 
-pub struct ToDoState<'a> {
-    pub items: Vec<ToDoItem<'a>>,
+pub struct ToDoState {
+    pub items: Vec<ToDoItem>,
     pub state: ListState,
 }
 
-impl<'a> ToDoState<'a> {
-    fn new(items: Vec<ToDoItem<'a>>) -> Self {
+impl ToDoState {
+    fn new(items: Vec<ToDoItem>) -> Self {
         Self {
             items,
             state: ListState::default(),
@@ -56,6 +56,10 @@ impl<'a> ToDoState<'a> {
         }
     }
 
+    // pub fn create_task(&mut self, text: &str) {
+    //     self.items.push(ToDoItem(text, false));
+    // }
+
     pub fn delete_task(&mut self) {
         match self.state.selected() {
             Some(i) => {
@@ -67,18 +71,35 @@ impl<'a> ToDoState<'a> {
     }
 }
 
-pub struct App<'a> {
-    pub todo: ToDoState<'a>,
+pub struct Modal {
+    active: bool
 }
 
-impl<'a> App<'a> {
-    pub fn new() -> App<'a> {
+impl Modal {
+    fn new() -> Modal {
+        Modal {
+            active: false
+        }
+    }
+
+    fn toggle(&mut self) {
+        self.active = !self.active;
+    }
+}
+pub struct App {
+    pub todo: ToDoState,
+    pub modal: Modal, 
+}
+
+impl App {
+    pub fn new() -> App {
         App {
             todo: ToDoState::new(vec![
-                ToDoItem("Item 1", false),
-                ToDoItem("Item 2", false),
-                ToDoItem("Item 3", false),
+                ToDoItem("Item 1".to_string(), false),
+                ToDoItem("Item 2".to_string(), false),
+                ToDoItem("Item 3".to_string(), false),
             ]),
+            modal: Modal::new(),
         }
     }
 }
