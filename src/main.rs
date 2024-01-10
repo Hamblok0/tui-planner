@@ -51,7 +51,7 @@ fn main() -> Result<()> {
             if key.kind == crossterm::event::KeyEventKind::Press {
                 match app.modal.active {
                     true => {
-                        match crossterm::event::read()?.into() {
+                        match key.into() {
                             Input { key: Key::Esc, .. } => {
                                 app.modal.toggle();
                             },
