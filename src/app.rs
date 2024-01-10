@@ -56,9 +56,9 @@ impl ToDoState {
         }
     }
 
-    // pub fn create_task(&mut self, text: &str) {
-    //     self.items.push(ToDoItem(text, false));
-    // }
+    pub fn create_task(&mut self, text: String) {
+        self.items.push(ToDoItem(text, false));
+    }
 
     pub fn delete_task(&mut self) {
         match self.state.selected() {
@@ -71,8 +71,9 @@ impl ToDoState {
     }
 }
 
+#[derive(PartialEq)]
 pub struct Modal {
-    active: bool
+    pub active: bool
 }
 
 impl Modal {
@@ -82,7 +83,7 @@ impl Modal {
         }
     }
 
-    fn toggle(&mut self) {
+    pub fn toggle(&mut self) {
         self.active = !self.active;
     }
 }

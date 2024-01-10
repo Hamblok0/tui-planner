@@ -4,6 +4,7 @@ use crossterm::terminal::{
     disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen,
 };
 use ratatui::style::Modifier;
+use ratatui::text;
 use ratatui::{
     prelude::{CrosstermBackend, Style, Terminal, Color},
     widgets::*,
@@ -39,19 +40,38 @@ fn main() -> Result<()> {
             .highlight_style(Style::default().bg(Color::LightGreen))
             .highlight_symbol(">> ");
                         
-            f.render_stateful_widget(list, f.size(), &mut app.todo.state)
+            f.render_stateful_widget(list, f.size(), &mut app.todo.state);
+            if (app.modal.active == true) {
+                f.render_widget(Clear, f.size());
+                f.render_widget(textarea.widget(), f.size());
+            }
         })?;
 
-        if crossterm::event::poll(std::time::Duration::from_millis(16))? {
-            if let crossterm::event::Event::Key(key) = crossterm::event::read()? {
-                if key.kind == crossterm::event::KeyEventKind::Press {
-                    match key.code {
-                        crossterm::event::KeyCode::Char('q') => break,
-                        crossterm::event::KeyCode::Char('c') => app.todo.toggle_complete(),
-                        crossterm::event::KeyCode::Char('j') => app.todo.next(),
-                        crossterm::event::KeyCode::Char('k') => app.todo.previous(),
-                        crossterm::event::KeyCode::Char('d') => app.todo.delete_task(),
-                        _ => {}
+        if let crossterm::event::Event::Key(key) = crossterm::event::read()? {
+            if key.kind == crossterm::event::KeyEventKind::Press {
+                match app.modal.active {
+                    true => {
+                        match crossterm::event::read()?.into() {
+                            Input { key: Key::Esc, .. } => {
+                                app.modal.toggle();
+                            },
+                            Input { key: Key::Enter, ..} => {
+                                app.todo.create_task(textarea.lines().join(""));
+                                app.modal.toggle();
+                            },
+                            input => { textarea.input(input); },
+                        }
+                    },
+                    false => {
+                        match key.code {
+                            crossterm::event::KeyCode::Char('q') => break,
+                            crossterm::event::KeyCode::Char('c') => app.todo.toggle_complete(),
+                            crossterm::event::KeyCode::Char('j') => app.todo.next(),
+                            crossterm::event::KeyCode::Char('k') => app.todo.previous(),
+                            crossterm::event::KeyCode::Char('d') => app.todo.delete_task(),
+                            crossterm::event::KeyCode::Char('n') => app.modal.toggle(),
+                            _ => {}
+                        }
                     }
                 }
             }
