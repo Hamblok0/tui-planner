@@ -41,7 +41,7 @@ fn main() -> Result<()> {
             .highlight_symbol(">> ");
                         
             f.render_stateful_widget(list, f.size(), &mut app.todo.state);
-            if (app.modal.active == true) {
+            if app.modal.active == true {
                 f.render_widget(Clear, f.size());
                 f.render_widget(textarea.widget(), f.size());
             }
