@@ -8,16 +8,16 @@ use ratatui::{
     prelude::{ CrosstermBackend, Style, Terminal, Color },
     widgets::*,
 };
-use std::io::stderr;
+use std::io::stdout;
 use tui_textarea::{ Input, Key };
 
 mod app;
 use crate::app::{ App, Modal };
 fn main() -> Result<()> {
     enable_raw_mode()?;
-    execute!(stderr(), EnterAlternateScreen)?;
+    execute!(stdout(), EnterAlternateScreen)?;
 
-    let mut terminal = Terminal::new(CrosstermBackend::new(stderr()))?;
+    let mut terminal = Terminal::new(CrosstermBackend::new(stdout()))?;
     let mut app = App::new();
 
     loop {
@@ -73,7 +73,7 @@ fn main() -> Result<()> {
         }
     }
 
-    execute!(stderr(), LeaveAlternateScreen)?;
+    execute!(stdout(), LeaveAlternateScreen)?;
     disable_raw_mode()?;
 
     Ok(())
