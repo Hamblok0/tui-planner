@@ -1,4 +1,8 @@
-use ratatui::widgets::*;
+use ratatui::{
+    prelude::Style,
+    widgets::*,
+};
+use tui_textarea::TextArea;
 
 pub struct ToDoItem (pub String, pub bool);
 
@@ -71,36 +75,39 @@ impl ToDoState {
     }
 }
 
-#[derive(PartialEq)]
-pub struct Modal {
-    pub active: bool
+pub enum Modal<'a> {
+    Inactive,
+    Active(TextArea<'a>),
 }
 
-impl Modal {
-    fn new() -> Modal {
-        Modal {
-            active: false
+impl<'a> Modal<'a> {
+    pub fn toggle(&mut self) {
+        *self = match self {
+            Modal::Inactive => {
+                let mut textarea = TextArea::default();
+
+                textarea.set_cursor_line_style(Style::default());
+                textarea.set_placeholder_text("Short To-Do Description...");
+                Modal::Active(textarea)
+            }
+            Modal::Active(_) => Modal::Inactive 
         }
     }
-
-    pub fn toggle(&mut self) {
-        self.active = !self.active;
-    }
 }
-pub struct App {
+pub struct App<'a> {
     pub todo: ToDoState,
-    pub modal: Modal, 
+    pub modal: Modal<'a>, 
 }
 
-impl App {
-    pub fn new() -> App {
+impl<'a> App<'a> {
+    pub fn new() -> App<'a> {
         App {
             todo: ToDoState::new(vec![
                 ToDoItem("Item 1".to_string(), false),
                 ToDoItem("Item 2".to_string(), false),
                 ToDoItem("Item 3".to_string(), false),
             ]),
-            modal: Modal::new(),
+            modal: Modal::Inactive,
         }
     }
 }

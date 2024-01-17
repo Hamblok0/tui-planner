@@ -4,26 +4,21 @@ use crossterm::terminal::{
     disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen,
 };
 use ratatui::style::Modifier;
-use ratatui::text;
 use ratatui::{
-    prelude::{CrosstermBackend, Style, Terminal, Color},
+    prelude::{ CrosstermBackend, Style, Terminal, Color },
     widgets::*,
 };
 use std::io::stderr;
-use tui_textarea::{Input, Key, TextArea};
+use tui_textarea::{ Input, Key };
 
 mod app;
-use crate::app::App;
+use crate::app::{ App, Modal };
 fn main() -> Result<()> {
     enable_raw_mode()?;
     execute!(stderr(), EnterAlternateScreen)?;
 
     let mut terminal = Terminal::new(CrosstermBackend::new(stderr()))?;
     let mut app = App::new();
-    let mut textarea = TextArea::default();
-
-    textarea.set_cursor_line_style(Style::default());
-    textarea.set_placeholder_text("Short To-Do Description...");
 
     loop {
         terminal.draw(|f| {
@@ -41,7 +36,7 @@ fn main() -> Result<()> {
             .highlight_symbol(">> ");
                         
             f.render_stateful_widget(list, f.size(), &mut app.todo.state);
-            if app.modal.active == true {
+            if let Modal::Active(ref textarea) = app.modal {
                 f.render_widget(Clear, f.size());
                 f.render_widget(textarea.widget(), f.size());
             }
@@ -49,8 +44,8 @@ fn main() -> Result<()> {
 
         if let crossterm::event::Event::Key(key) = crossterm::event::read()? {
             if key.kind == crossterm::event::KeyEventKind::Press {
-                match app.modal.active {
-                    true => {
+                match app.modal {
+                    Modal::Active(ref mut textarea) => {
                         match key.into() {
                             Input { key: Key::Esc, .. } => {
                                 app.modal.toggle();
@@ -62,7 +57,7 @@ fn main() -> Result<()> {
                             input => { textarea.input(input); },
                         }
                     },
-                    false => {
+                    Modal::Inactive => {
                         match key.code {
                             crossterm::event::KeyCode::Char('q') => break,
                             crossterm::event::KeyCode::Char('c') => app.todo.toggle_complete(),
