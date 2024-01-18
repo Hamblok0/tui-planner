@@ -13,6 +13,7 @@ use tui_textarea::{ Input, Key };
 
 mod app;
 use crate::app::{ App, Modal };
+
 fn main() -> Result<()> {
     enable_raw_mode()?;
     execute!(stdout(), EnterAlternateScreen)?;
@@ -30,15 +31,18 @@ fn main() -> Result<()> {
             })
             .collect();  
 
+            let area = f.size();
+
             let list = List::new(items)
             .block(Block::default().borders(Borders::ALL).title("To Do"))
             .highlight_style(Style::default().bg(Color::LightGreen))
             .highlight_symbol(">> ");
                         
-            f.render_stateful_widget(list, f.size(), &mut app.todo.state);
+            f.render_stateful_widget(list, area, &mut app.todo.state);
             if let Modal::Active(ref textarea) = app.modal {
-                f.render_widget(Clear, f.size());
-                f.render_widget(textarea.widget(), f.size());
+                let area = app.modal.get_center(f.size());
+                f.render_widget(Clear, area);
+                f.render_widget(textarea.widget(), area);
             }
         })?;
 

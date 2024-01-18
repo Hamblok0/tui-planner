@@ -1,5 +1,5 @@
 use ratatui::{
-    prelude::Style,
+    prelude::*,
     widgets::*,
 };
 use tui_textarea::TextArea;
@@ -88,12 +88,30 @@ impl<'a> Modal<'a> {
 
                 textarea.set_cursor_line_style(Style::default());
                 textarea.set_placeholder_text("Short To-Do Description...");
+                textarea.set_block(Block::default().borders(Borders::ALL).title("New Item"));
                 Modal::Active(textarea)
             }
             Modal::Active(_) => Modal::Inactive 
         }
     }
+
+    pub fn get_center(&self, r: Rect) -> Rect {
+        let layout = Layout::new(Direction::Vertical, [
+            Constraint::Percentage(47),
+            Constraint::Percentage(5),
+            Constraint::Percentage(47)
+        ])
+        .split(r);
+        
+        Layout::new(Direction::Horizontal, [
+            Constraint::Percentage(30),
+            Constraint::Percentage(40),
+            Constraint::Percentage(30)
+        ])
+        .split(layout[1])[1]
+    }
 }
+
 pub struct App<'a> {
     pub todo: ToDoState,
     pub modal: Modal<'a>, 
