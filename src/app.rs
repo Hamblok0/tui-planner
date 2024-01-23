@@ -77,22 +77,37 @@ impl ToDoState {
 
 pub enum Modal<'a> {
     Inactive,
-    Active(TextArea<'a>),
+    Active([TextArea<'a>; 2], usize),
 }
 
 impl<'a> Modal<'a> {
     pub fn toggle(&mut self) {
         *self = match self {
             Modal::Inactive => {
-                let mut textarea = TextArea::default();
+                let mut textarea = [TextArea::default(), TextArea::default()];
+                let layout = Layout::default().direction(Direction::Vertical);
 
-                textarea.set_cursor_line_style(Style::default());
-                textarea.set_placeholder_text("Short To-Do Description...");
-                textarea.set_block(Block::default().borders(Borders::ALL).title("New Item"));
-                Modal::Active(textarea)
+                textarea[0].set_cursor_line_style(Style::default());
+                textarea[0].set_placeholder_text("Short To-Do Description...");
+                textarea[0].set_block(Block::default().borders(Borders::ALL).title("Title").style(Style::default()));
+                textarea[1].set_placeholder_text("Details (Optional)...");
+                textarea[1].set_block(Block::default().borders(Borders::ALL).title("Description").style(Style::default().fg(Color::DarkGray)));
+                Modal::Active(textarea, 0)
             }
-            Modal::Active(_) => Modal::Inactive 
+            Modal::Active(..) => Modal::Inactive 
         }
+    }
+
+    pub fn change_focus(&mut self, which: &mut usize) {
+        if let Modal::Active(ref textarea, ref which) = self {
+            let current = textarea[*which].block().unwrap();
+            *which = (*which + 1) % 2;
+            let next = textarea[*which].block().unwrap();
+
+            current.set_style(Style::default().fg(Color::DarkGray));
+            next.set_style(Style::default());
+
+        } 
     }
 
     pub fn get_center(&self, r: Rect) -> Rect {

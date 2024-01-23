@@ -39,7 +39,7 @@ fn main() -> Result<()> {
             .highlight_symbol(">> ");
                         
             f.render_stateful_widget(list, area, &mut app.todo.state);
-            if let Modal::Active(ref textarea) = app.modal {
+            if let Modal::Active(ref textarea, _) = app.modal {
                 let area = app.modal.get_center(f.size());
                 f.render_widget(Clear, area);
                 f.render_widget(textarea.widget(), area);
@@ -49,16 +49,16 @@ fn main() -> Result<()> {
         if let crossterm::event::Event::Key(key) = crossterm::event::read()? {
             if key.kind == crossterm::event::KeyEventKind::Press {
                 match app.modal {
-                    Modal::Active(ref mut textarea) => {
+                    Modal::Active(ref mut textarea, which) => {
                         match key.into() {
                             Input { key: Key::Esc, .. } => {
                                 app.modal.toggle();
                             },
                             Input { key: Key::Enter, ..} => {
-                                app.todo.create_task(textarea.lines().join(""));
+                                app.todo.create_task(textarea[which].lines().join(""));
                                 app.modal.toggle();
                             },
-                            input => { textarea.input(input); },
+                            input => { textarea[which].input(input); },
                         }
                     },
                     Modal::Inactive => {
