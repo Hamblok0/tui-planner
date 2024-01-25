@@ -1,10 +1,31 @@
-use ratatui::{
-    prelude::*,
-    widgets::*,
-};
+use ratatui::{prelude::*, widgets::*};
 use tui_textarea::TextArea;
 
-pub struct ToDoItem (pub String, pub bool);
+pub struct ToDoItem(pub String, pub bool);
+
+pub fn activate(textarea: &mut TextArea) {
+        if let Some(block) = textarea.block() {
+            textarea.set_cursor_line_style(Style::default().add_modifier(Modifier::UNDERLINED));
+            textarea.set_cursor_style(Style::default().add_modifier(Modifier::REVERSED));
+            textarea.set_block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .style(Style::default())
+            );
+        }
+    }
+
+pub fn deactivate(textarea: &mut TextArea) {
+    if let Some(block) = textarea.block() {
+        textarea.set_cursor_line_style(Style::default());
+        textarea.set_cursor_style(Style::default());
+        textarea.set_block(
+            Block::default()
+                .borders(Borders::ALL)
+                .style(Style::default().fg(Color::DarkGray))
+        );
+    }
+}
 
 pub struct ToDoState {
     pub items: Vec<ToDoItem>,
@@ -75,6 +96,7 @@ impl ToDoState {
     }
 }
 
+#[derive(Debug)]
 pub enum Modal<'a> {
     Inactive,
     Active([TextArea<'a>; 2], usize),
@@ -86,50 +108,63 @@ impl<'a> Modal<'a> {
             Modal::Inactive => {
                 let mut textarea = [TextArea::default(), TextArea::default()];
                 let layout = Layout::default().direction(Direction::Vertical);
+                let mut which: usize = 0;
 
                 textarea[0].set_cursor_line_style(Style::default());
                 textarea[0].set_placeholder_text("Short To-Do Description...");
-                textarea[0].set_block(Block::default().borders(Borders::ALL).title("Title").style(Style::default()));
+                textarea[0].set_block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title("Title")
+                        .style(Style::default()),
+                );
                 textarea[1].set_placeholder_text("Details (Optional)...");
-                textarea[1].set_block(Block::default().borders(Borders::ALL).title("Description").style(Style::default().fg(Color::DarkGray)));
-                Modal::Active(textarea, 0)
+                textarea[1].set_block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title("Description")
+                        .style(Style::default().fg(Color::DarkGray)),
+                );
+                Modal::Active(textarea, which)
             }
-            Modal::Active(..) => Modal::Inactive 
+            Modal::Active(..) => Modal::Inactive,
         }
     }
 
-    pub fn change_focus(&mut self, which: &mut usize) {
-        if let Modal::Active(ref textarea, ref which) = self {
-            let current = textarea[*which].block().unwrap();
+    pub fn change_focus(&mut self) {
+        if let Modal::Active(ref mut textareas, ref mut which) = self {
+            deactivate(&mut textareas[*which]);
             *which = (*which + 1) % 2;
-            let next = textarea[*which].block().unwrap();
-
-            current.set_style(Style::default().fg(Color::DarkGray));
-            next.set_style(Style::default());
-
-        } 
+            activate(&mut textareas[*which]);
+        }
     }
 
     pub fn get_center(&self, r: Rect) -> Rect {
-        let layout = Layout::new(Direction::Vertical, [
-            Constraint::Percentage(47),
-            Constraint::Percentage(5),
-            Constraint::Percentage(47)
-        ])
+        let layout = Layout::new(
+            Direction::Vertical,
+            [
+                Constraint::Percentage(47),
+                Constraint::Percentage(5),
+                Constraint::Percentage(47),
+            ],
+        )
         .split(r);
-        
-        Layout::new(Direction::Horizontal, [
-            Constraint::Percentage(30),
-            Constraint::Percentage(40),
-            Constraint::Percentage(30)
-        ])
+
+        Layout::new(
+            Direction::Horizontal,
+            [
+                Constraint::Percentage(30),
+                Constraint::Percentage(40),
+                Constraint::Percentage(30),
+            ],
+        )
         .split(layout[1])[1]
     }
 }
 
 pub struct App<'a> {
     pub todo: ToDoState,
-    pub modal: Modal<'a>, 
+    pub modal: Modal<'a>,
 }
 
 impl<'a> App<'a> {
