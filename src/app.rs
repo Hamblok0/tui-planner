@@ -3,29 +3,41 @@ use tui_textarea::TextArea;
 
 pub struct ToDoItem(pub String, pub bool);
 
-pub fn activate(textarea: &mut TextArea) {
+pub fn activate(textarea: &mut TextArea, which: &usize) {
         if let Some(block) = textarea.block() {
+            let title = get_title(which).unwrap();
             textarea.set_cursor_line_style(Style::default().add_modifier(Modifier::UNDERLINED));
             textarea.set_cursor_style(Style::default().add_modifier(Modifier::REVERSED));
             textarea.set_block(
                 Block::default()
                     .borders(Borders::ALL)
                     .style(Style::default())
+                    .title(title)
             );
         }
     }
 
-pub fn deactivate(textarea: &mut TextArea) {
+pub fn deactivate(textarea: &mut TextArea, which: &usize) {
     if let Some(block) = textarea.block() {
+        let title = get_title(which).unwrap();
         textarea.set_cursor_line_style(Style::default());
         textarea.set_cursor_style(Style::default());
         textarea.set_block(
             Block::default()
                 .borders(Borders::ALL)
                 .style(Style::default().fg(Color::DarkGray))
+                .title(title)
         );
     }
 }
+
+fn get_title(which: &usize) -> Option<&str> {
+        match *which {
+            0 => Some("Title"), 
+            1 => Some("Description"),
+            _ => None 
+        }
+    }
 
 pub struct ToDoState {
     pub items: Vec<ToDoItem>,
@@ -93,7 +105,7 @@ impl ToDoState {
             }
             None => {}
         }
-    }
+    } 
 }
 
 #[derive(Debug)]
@@ -132,9 +144,9 @@ impl<'a> Modal<'a> {
 
     pub fn change_focus(&mut self) {
         if let Modal::Active(ref mut textareas, ref mut which) = self {
-            deactivate(&mut textareas[*which]);
+            deactivate(&mut textareas[*which], which);
             *which = (*which + 1) % 2;
-            activate(&mut textareas[*which]);
+            activate(&mut textareas[*which], which);
         }
     }
 
@@ -158,7 +170,7 @@ impl<'a> Modal<'a> {
             ],
         )
         .split(layout[1])[1]
-    }
+    } 
 }
 
 pub struct App<'a> {

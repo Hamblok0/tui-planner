@@ -70,9 +70,13 @@ fn main() -> Result<()> {
                             app.todo.create_task(textareas[which].lines().join(""));
                             app.modal.toggle();
                         }
+                        Input { key: Key::Tab, .. } => {
+                           app.modal.change_focus(); 
+                        }
                         input => {
                             textareas[which].input(input);
                         }
+                        
                     },
                     Modal::Inactive => match key.code {
                         crossterm::event::KeyCode::Char('q') => break,
