@@ -3,9 +3,10 @@ use crossterm::execute;
 use crossterm::terminal::{
     disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen,
 };
+use ratatui::layout::{Constraint, Direction};
 use ratatui::style::Modifier;
 use ratatui::{
-    prelude::{Color, CrosstermBackend, Style, Terminal},
+    prelude::{Color, CrosstermBackend, Style, Terminal, Layout},
     widgets::*,
 };
 use std::io::stdout;
@@ -46,10 +47,13 @@ fn main() -> Result<()> {
             f.render_stateful_widget(list, area, &mut app.todo.state);
             if let Modal::Active(ref textareas, _) = app.modal {
                 let area = app.modal.get_center(f.size());
+                let layout = Layout::new(
+                    Direction::Vertical,
+                    [Constraint::Percentage(10), Constraint::Percentage(90)]
+                ).split(area);
                 f.render_widget(Clear, area);
-                for textarea in textareas {
-                    f.render_widget(textarea.widget(), area);
-                }
+                f.render_widget(textareas[0].widget(), layout[0]);
+                f.render_widget(textareas[1].widget(), layout[1]);
             }
         })?;
 

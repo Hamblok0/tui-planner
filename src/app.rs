@@ -107,7 +107,6 @@ impl<'a> Modal<'a> {
         *self = match self {
             Modal::Inactive => {
                 let mut textarea = [TextArea::default(), TextArea::default()];
-                let layout = Layout::default().direction(Direction::Vertical);
                 let mut which: usize = 0;
 
                 textarea[0].set_cursor_line_style(Style::default());
@@ -143,9 +142,9 @@ impl<'a> Modal<'a> {
         let layout = Layout::new(
             Direction::Vertical,
             [
-                Constraint::Percentage(47),
-                Constraint::Percentage(5),
-                Constraint::Percentage(47),
+                Constraint::Percentage(20),
+                Constraint::Percentage(60),
+                Constraint::Percentage(20),
             ],
         )
         .split(r);
