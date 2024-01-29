@@ -120,6 +120,8 @@ impl ToDoState {
 pub enum Modal<'a> {
     Inactive,
     Active([TextArea<'a>; 2], usize),
+    Edit([TextArea<'a>; 2], usize),
+    View,
 }
 
 impl<'a> Modal<'a> {
@@ -145,8 +147,9 @@ impl<'a> Modal<'a> {
                         .style(Style::default().fg(Color::DarkGray)),
                 );
                 Modal::Active(textarea, which)
-            }
+            },
             Modal::Active(..) => Modal::Inactive,
+            _ => Modal::Inactive 
         }
     }
 

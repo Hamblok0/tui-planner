@@ -87,6 +87,7 @@ fn main() -> Result<()> {
                         crossterm::event::KeyCode::Char('n') => app.modal.toggle(),
                         _ => {}
                     },
+                    _ => ()
                 }
             }
         }
