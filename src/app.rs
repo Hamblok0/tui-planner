@@ -5,7 +5,7 @@ pub struct ToDoItem(pub String, pub bool);
 
 pub fn activate(textarea: &mut TextArea, which: &usize) {
         if let Some(block) = textarea.block() {
-            let title = get_title(which).unwrap();
+            let title = get_title(*which).unwrap();
             textarea.set_cursor_line_style(Style::default().add_modifier(Modifier::UNDERLINED));
             textarea.set_cursor_style(Style::default().add_modifier(Modifier::REVERSED));
             textarea.set_block(
@@ -19,7 +19,7 @@ pub fn activate(textarea: &mut TextArea, which: &usize) {
 
 pub fn deactivate(textarea: &mut TextArea, which: &usize) {
     if let Some(block) = textarea.block() {
-        let title = get_title(which).unwrap();
+        let title = get_title(*which).unwrap();
         textarea.set_cursor_line_style(Style::default());
         textarea.set_cursor_style(Style::default());
         textarea.set_block(
@@ -31,10 +31,10 @@ pub fn deactivate(textarea: &mut TextArea, which: &usize) {
     }
 }
 
-fn get_title(which: &usize) -> Option<&str> {
-        match *which {
-            0 => Some("Title"), 
-            1 => Some("Description"),
+fn get_title(which: usize) -> Option<String> {
+        match which {
+            0 => Some("Title".to_string()), 
+            1 => Some("Description".to_string()),
             _ => None 
         }
     }
