@@ -1,7 +1,11 @@
 use ratatui::{prelude::*, widgets::*};
 use tui_textarea::TextArea;
 
-pub struct ToDoItem(pub String, pub bool);
+pub struct ToDoItem {
+    pub title: String,
+    pub description: String,
+    pub complete: bool
+}
 
 pub fn activate(textarea: &mut TextArea, which: &usize) {
         if let Some(block) = textarea.block() {
@@ -87,14 +91,18 @@ impl ToDoState {
     pub fn toggle_complete(&mut self) {
         match self.state.selected() {
             Some(i) => {
-                self.items[i].1 = !self.items[i].1;
+                self.items[i].complete = !self.items[i].complete;
             }
             None => {}
         }
     }
 
-    pub fn create_task(&mut self, text: String) {
-        self.items.push(ToDoItem(text, false));
+    pub fn create_task(&mut self, title: String, description: String) {
+        self.items.push(ToDoItem {
+            title,
+            description,
+            complete: false
+        });
     }
 
     pub fn delete_task(&mut self) {
@@ -181,11 +189,7 @@ pub struct App<'a> {
 impl<'a> App<'a> {
     pub fn new() -> App<'a> {
         App {
-            todo: ToDoState::new(vec![
-                ToDoItem("Item 1".to_string(), false),
-                ToDoItem("Item 2".to_string(), false),
-                ToDoItem("Item 3".to_string(), false),
-            ]),
+            todo: ToDoState::new(vec![]),
             modal: Modal::Inactive,
         }
     }

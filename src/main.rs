@@ -28,12 +28,12 @@ fn main() -> Result<()> {
                 .todo
                 .items
                 .iter()
-                .map(|i| match i.1 {
+                .map(|i| match i.complete {
                     true => {
-                        return ListItem::new(&*i.0)
+                        return ListItem::new(&*i.title)
                             .style(Style::default().add_modifier(Modifier::CROSSED_OUT))
                     }
-                    false => return ListItem::new(&*i.0),
+                    false => return ListItem::new(&*i.title),
                 })
                 .collect();
 
@@ -67,7 +67,7 @@ fn main() -> Result<()> {
                         Input {
                             key: Key::Enter, ..
                         } => {
-                            app.todo.create_task(textareas[which].lines().join(""));
+                            app.todo.create_task(textareas[0].lines().join(""), textareas[1].lines().join(""));
                             app.modal.toggle();
                         }
                         Input { key: Key::Tab, .. } => {
