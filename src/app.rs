@@ -4,22 +4,22 @@ use tui_textarea::TextArea;
 pub struct ToDoItem {
     pub title: String,
     pub description: String,
-    pub complete: bool
+    pub complete: bool,
 }
 
 pub fn activate(textarea: &mut TextArea, which: &usize) {
-        if let Some(block) = textarea.block() {
-            let title = get_title(*which).unwrap();
-            textarea.set_cursor_line_style(Style::default().add_modifier(Modifier::UNDERLINED));
-            textarea.set_cursor_style(Style::default().add_modifier(Modifier::REVERSED));
-            textarea.set_block(
-                Block::default()
-                    .borders(Borders::ALL)
-                    .style(Style::default())
-                    .title(title)
-            );
-        }
+    if let Some(block) = textarea.block() {
+        let title = get_title(*which).unwrap();
+        textarea.set_cursor_line_style(Style::default().add_modifier(Modifier::UNDERLINED));
+        textarea.set_cursor_style(Style::default().add_modifier(Modifier::REVERSED));
+        textarea.set_block(
+            Block::default()
+                .borders(Borders::ALL)
+                .style(Style::default())
+                .title(title),
+        );
     }
+}
 
 pub fn deactivate(textarea: &mut TextArea, which: &usize) {
     if let Some(block) = textarea.block() {
@@ -30,18 +30,18 @@ pub fn deactivate(textarea: &mut TextArea, which: &usize) {
             Block::default()
                 .borders(Borders::ALL)
                 .style(Style::default().fg(Color::DarkGray))
-                .title(title)
+                .title(title),
         );
     }
 }
 
 fn get_title(which: usize) -> Option<String> {
-        match which {
-            0 => Some("Title".to_string()), 
-            1 => Some("Description".to_string()),
-            _ => None 
-        }
+    match which {
+        0 => Some("Title".to_string()),
+        1 => Some("Description".to_string()),
+        _ => None,
     }
+}
 
 pub struct ToDoState {
     pub items: Vec<ToDoItem>,
@@ -101,7 +101,7 @@ impl ToDoState {
         self.items.push(ToDoItem {
             title,
             description,
-            complete: false
+            complete: false,
         });
     }
 
@@ -113,21 +113,26 @@ impl ToDoState {
             }
             None => {}
         }
-    } 
+    }
 }
 
 #[derive(Debug)]
 pub enum Modal<'a> {
     Inactive,
-    Active([TextArea<'a>; 2], usize),
+    New([TextArea<'a>; 2], usize),
     Edit([TextArea<'a>; 2], usize),
     View,
 }
 
-impl<'a> Modal<'a> {
-    pub fn toggle(&mut self) {
-        *self = match self {
-            Modal::Inactive => {
+pub enum ModalType {
+    Inactive,
+    New,
+    Edit,
+    View
+} impl<'a> Modal<'a> {
+    pub fn toggle(&mut self, modal_type: ModalType) {
+        *self = match modal_type {
+            ModalType::New => {
                 let mut textarea = [TextArea::default(), TextArea::default()];
                 let mut which: usize = 0;
 
@@ -146,15 +151,15 @@ impl<'a> Modal<'a> {
                         .title("Description")
                         .style(Style::default().fg(Color::DarkGray)),
                 );
-                Modal::Active(textarea, which)
-            },
-            Modal::Active(..) => Modal::Inactive,
-            _ => Modal::Inactive 
+                Modal::New(textarea, which)
+            }
+            ModalType::Inactive => Modal::Inactive,
+            _ => Modal::Inactive,
         }
     }
 
     pub fn change_focus(&mut self) {
-        if let Modal::Active(ref mut textareas, ref mut which) = self {
+        if let Modal::New(ref mut textareas, ref mut which) = self {
             deactivate(&mut textareas[*which], which);
             *which = (*which + 1) % 2;
             activate(&mut textareas[*which], which);
@@ -181,7 +186,7 @@ impl<'a> Modal<'a> {
             ],
         )
         .split(layout[1])[1]
-    } 
+    }
 }
 
 pub struct App<'a> {
