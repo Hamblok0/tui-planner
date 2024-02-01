@@ -63,7 +63,7 @@ fn main() -> Result<()> {
                 match app.modal {
                     Modal::New(ref mut textareas, which) => match key.into() {
                         Input { key: Key::Esc, .. } => {
-                            app.modal.toggle(ModalType::Inactive);
+                            app.toggle_modal(ModalType::Inactive);
                         }
                         Input {
                             key: Key::Enter, ..
@@ -72,7 +72,7 @@ fn main() -> Result<()> {
                                 textareas[0].lines().join(""),
                                 textareas[1].lines().join(""),
                             );
-                            app.modal.toggle(ModalType::Inactive);
+                            app.toggle_modal(ModalType::Inactive);
                         }
                         Input { key: Key::Tab, .. } => {
                             app.modal.change_focus();
@@ -87,7 +87,8 @@ fn main() -> Result<()> {
                         crossterm::event::KeyCode::Char('j') => app.todo.next(),
                         crossterm::event::KeyCode::Char('k') => app.todo.previous(),
                         crossterm::event::KeyCode::Char('d') => app.todo.delete_task(),
-                        crossterm::event::KeyCode::Char('n') => app.modal.toggle(ModalType::New),
+                        crossterm::event::KeyCode::Char('n') => app.toggle_modal(ModalType::New),
+                        crossterm::event::KeyCode::Char('v') => app.toggle_modal(ModalType::View),
                         _ => {}
                     },
                     _ => (),

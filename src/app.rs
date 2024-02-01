@@ -1,6 +1,7 @@
 use ratatui::{prelude::*, widgets::*};
 use tui_textarea::TextArea;
 
+#[derive(Debug)]
 pub struct ToDoItem {
     pub title: String,
     pub description: String,
@@ -43,6 +44,7 @@ fn get_title(which: usize) -> Option<String> {
     }
 }
 
+#[derive(Debug)]
 pub struct ToDoState {
     pub items: Vec<ToDoItem>,
     pub state: ListState,
@@ -103,6 +105,7 @@ impl ToDoState {
             description,
             complete: false,
         });
+        println!("{:?}", self.items[0]);
     }
 
     pub fn delete_task(&mut self) {
@@ -121,43 +124,18 @@ pub enum Modal<'a> {
     Inactive,
     New([TextArea<'a>; 2], usize),
     Edit([TextArea<'a>; 2], usize),
-    View,
+    View([Paragraph<'a>; 2]),
 }
 
+#[derive(Debug)]
 pub enum ModalType {
     Inactive,
     New,
     Edit,
-    View
-} impl<'a> Modal<'a> {
-    pub fn toggle(&mut self, modal_type: ModalType) {
-        *self = match modal_type {
-            ModalType::New => {
-                let mut textarea = [TextArea::default(), TextArea::default()];
-                let mut which: usize = 0;
+    View,
+}
 
-                textarea[0].set_cursor_line_style(Style::default());
-                textarea[0].set_placeholder_text("Short To-Do Description...");
-                textarea[0].set_block(
-                    Block::default()
-                        .borders(Borders::ALL)
-                        .title("Title")
-                        .style(Style::default()),
-                );
-                textarea[1].set_placeholder_text("Details (Optional)...");
-                textarea[1].set_block(
-                    Block::default()
-                        .borders(Borders::ALL)
-                        .title("Description")
-                        .style(Style::default().fg(Color::DarkGray)),
-                );
-                Modal::New(textarea, which)
-            }
-            ModalType::Inactive => Modal::Inactive,
-            _ => Modal::Inactive,
-        }
-    }
-
+impl<'a> Modal<'a> {
     pub fn change_focus(&mut self) {
         if let Modal::New(ref mut textareas, ref mut which) = self {
             deactivate(&mut textareas[*which], which);
@@ -199,6 +177,42 @@ impl<'a> App<'a> {
         App {
             todo: ToDoState::new(vec![]),
             modal: Modal::Inactive,
+        }
+    }
+
+    pub fn toggle_modal(&mut self, modal_type: ModalType) {
+        self.modal = match modal_type {
+            ModalType::New => {
+                let mut textarea = [TextArea::default(), TextArea::default()];
+                let mut which: usize = 0;
+
+                textarea[0].set_cursor_line_style(Style::default());
+                textarea[0].set_placeholder_text("Short To-Do Description...");
+                textarea[0].set_block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title("Title")
+                        .style(Style::default()),
+                );
+                textarea[1].set_placeholder_text("Details (Optional)...");
+                textarea[1].set_block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title("Description")
+                        .style(Style::default().fg(Color::DarkGray)),
+                );
+                Modal::New(textarea, which)
+            }
+            ModalType::View => {
+                let selected = self.todo.state.selected().unwrap();
+                let task = &self.todo.items[selected];
+                let title = Paragraph::new(task[0]).block(Block::new().title("Title").borders(Borders::ALL));
+                let description = Paragraph::new(task[1]).block(Block::new().title("Title").borders(Borders::ALL));
+
+                Modal::View([title, description])
+            }
+            ModalType::Inactive => Modal::Inactive,
+            _ => Modal::Inactive,
         }
     }
 }
