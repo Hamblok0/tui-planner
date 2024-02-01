@@ -206,8 +206,8 @@ impl<'a> App<'a> {
             ModalType::View => {
                 let selected = self.todo.state.selected().unwrap();
                 let task = &self.todo.items[selected];
-                let title = Paragraph::new(task[0]).block(Block::new().title("Title").borders(Borders::ALL));
-                let description = Paragraph::new(task[1]).block(Block::new().title("Title").borders(Borders::ALL));
+                let title = Paragraph::new(task.title.clone()).block(Block::new().title("Title").borders(Borders::ALL));
+                let description = Paragraph::new(task.description.clone()).block(Block::new().title("Description").borders(Borders::ALL));
 
                 Modal::View([title, description])
             }
