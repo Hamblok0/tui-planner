@@ -11,7 +11,7 @@ pub struct ToDoItem {
 pub fn activate(textarea: &mut TextArea, which: &usize) {
     if let Some(block) = textarea.block() {
         let title = get_title(*which).unwrap();
-        textarea.set_cursor_line_style(Style::default().add_modifier(Modifier::UNDERLINED));
+        textarea.set_cursor_line_style(Style::default());
         textarea.set_cursor_style(Style::default().add_modifier(Modifier::REVERSED));
         textarea.set_block(
             Block::default()
@@ -105,7 +105,6 @@ impl ToDoState {
             description,
             complete: false,
         });
-        println!("{:?}", self.items[0]);
     }
 
     pub fn delete_task(&mut self) {
@@ -122,22 +121,18 @@ impl ToDoState {
 #[derive(Debug)]
 pub enum Modal<'a> {
     Inactive,
-    New([TextArea<'a>; 2], usize),
-    Edit([TextArea<'a>; 2], usize),
-    View([Paragraph<'a>; 2]),
+    Active([TextArea<'a>; 2], usize),
 }
 
-#[derive(Debug)]
 pub enum ModalType {
     Inactive,
     New,
-    Edit,
     View,
 }
 
 impl<'a> Modal<'a> {
     pub fn change_focus(&mut self) {
-        if let Modal::New(ref mut textareas, ref mut which) = self {
+        if let Modal::Active(ref mut textareas, ref mut which) = self {
             deactivate(&mut textareas[*which], which);
             *which = (*which + 1) % 2;
             activate(&mut textareas[*which], which);
@@ -201,17 +196,8 @@ impl<'a> App<'a> {
                         .title("Description")
                         .style(Style::default().fg(Color::DarkGray)),
                 );
-                Modal::New(textarea, which)
+                Modal::Active(textarea, which)
             }
-            ModalType::View => {
-                let selected = self.todo.state.selected().unwrap();
-                let task = &self.todo.items[selected];
-                let title = Paragraph::new(task.title.clone()).block(Block::new().title("Title").borders(Borders::ALL));
-                let description = Paragraph::new(task.description.clone()).block(Block::new().title("Description").borders(Borders::ALL));
-
-                Modal::View([title, description])
-            }
-            ModalType::Inactive => Modal::Inactive,
             _ => Modal::Inactive,
         }
     }

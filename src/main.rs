@@ -6,7 +6,7 @@ use crossterm::terminal::{
 use ratatui::layout::{Constraint, Direction};
 use ratatui::style::Modifier;
 use ratatui::{
-    prelude::{Color, CrosstermBackend, Layout, Style, Terminal},
+    prelude::{Color, CrosstermBackend, Layout, Style, Terminal, Frame},
     widgets::*,
 };
 use std::io::stdout;
@@ -45,23 +45,38 @@ fn main() -> Result<()> {
                 .highlight_symbol(">> ");
 
             f.render_stateful_widget(list, area, &mut app.todo.state);
-            if let Modal::New(ref textareas, _) = app.modal {
-                let area = app.modal.get_center(f.size());
-                let layout = Layout::new(
-                    Direction::Vertical,
-                    [Constraint::Percentage(10), Constraint::Percentage(90)],
-                )
-                .split(area);
-                f.render_widget(Clear, area);
-                f.render_widget(textareas[0].widget(), layout[0]);
-                f.render_widget(textareas[1].widget(), layout[1]);
+            
+            match app.modal {
+                Modal::Active(ref textareas, _) => {
+                    let area = app.modal.get_center(f.size());
+                    let layout = Layout::new(
+                        Direction::Vertical,
+                        [Constraint::Percentage(10), Constraint::Percentage(90)],
+                    )
+                    .split(area);
+                    f.render_widget(Clear, area);
+                    f.render_widget(textareas[0].widget(), layout[0]);
+                    f.render_widget(textareas[1].widget(), layout[1]);
+                }
+                // Modal::View(ref paragraphs) => {
+                //     let area = app.modal.get_center(f.size());
+                //     let layout = Layout::new(
+                //         Direction::Vertical,
+                //         [Constraint::Percentage(10), Constraint::Percentage(90)],
+                //     )
+                //     .split(area);
+                //     f.render_widget(Clear, area);
+                //     f.render_widget(paragraphs[0], layout[0]);
+                //     f.render_widget(paragraphs[1], layout[1]);
+                // }
+                _ => ()
             }
         })?;
 
         if let crossterm::event::Event::Key(key) = crossterm::event::read()? {
             if key.kind == crossterm::event::KeyEventKind::Press {
                 match app.modal {
-                    Modal::New(ref mut textareas, which) => match key.into() {
+                    Modal::Active(ref mut textareas, which) => match key.into() {
                         Input { key: Key::Esc, .. } => {
                             app.toggle_modal(ModalType::Inactive);
                         }
