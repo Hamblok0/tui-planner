@@ -58,17 +58,6 @@ fn main() -> Result<()> {
                     f.render_widget(textareas[0].widget(), layout[0]);
                     f.render_widget(textareas[1].widget(), layout[1]);
                 }
-                // Modal::View(ref paragraphs) => {
-                //     let area = app.modal.get_center(f.size());
-                //     let layout = Layout::new(
-                //         Direction::Vertical,
-                //         [Constraint::Percentage(10), Constraint::Percentage(90)],
-                //     )
-                //     .split(area);
-                //     f.render_widget(Clear, area);
-                //     f.render_widget(paragraphs[0], layout[0]);
-                //     f.render_widget(paragraphs[1], layout[1]);
-                // }
                 _ => ()
             }
         })?;
