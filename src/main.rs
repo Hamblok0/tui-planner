@@ -6,7 +6,7 @@ use crossterm::terminal::{
 use ratatui::layout::{Constraint, Direction};
 use ratatui::style::Modifier;
 use ratatui::{
-    prelude::{Color, CrosstermBackend, Layout, Style, Terminal, Frame},
+    prelude::{Color, CrosstermBackend, Layout, Style, Terminal},
     widgets::*,
 };
 use std::io::stdout;
@@ -45,9 +45,9 @@ fn main() -> Result<()> {
                 .highlight_symbol(">> ");
 
             f.render_stateful_widget(list, area, &mut app.todo.state);
-            
+
             match app.modal {
-                Modal::Active(ref textareas, _) => {
+                Modal::Active(ref textareas, _, _) => {
                     let area = app.modal.get_center(f.size());
                     let layout = Layout::new(
                         Direction::Vertical,
@@ -65,7 +65,7 @@ fn main() -> Result<()> {
         if let crossterm::event::Event::Key(key) = crossterm::event::read()? {
             if key.kind == crossterm::event::KeyEventKind::Press {
                 match app.modal {
-                    Modal::Active(ref mut textareas, which) => match key.into() {
+                    Modal::Active(ref mut textareas, which, ref modal_type) => match key.into() {
                         Input { key: Key::Esc, .. } => {
                             app.toggle_modal(ModalType::Inactive);
                         }

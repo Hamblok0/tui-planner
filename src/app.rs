@@ -118,10 +118,9 @@ impl ToDoState {
     }
 }
 
-#[derive(Debug)]
 pub enum Modal<'a> {
     Inactive,
-    Active([TextArea<'a>; 2], usize),
+    Active([TextArea<'a>; 2], usize, ModalType),
 }
 
 pub enum ModalType {
@@ -132,7 +131,7 @@ pub enum ModalType {
 
 impl<'a> Modal<'a> {
     pub fn change_focus(&mut self) {
-        if let Modal::Active(ref mut textareas, ref mut which) = self {
+        if let Modal::Active(ref mut textareas, ref mut which, _) = self {
             deactivate(&mut textareas[*which], which);
             *which = (*which + 1) % 2;
             activate(&mut textareas[*which], which);
@@ -177,9 +176,9 @@ impl<'a> App<'a> {
 
     pub fn toggle_modal(&mut self, modal_type: ModalType) {
         self.modal = match modal_type {
-            ModalType::New => {
+            ModalType::New | ModalType::View => {
                 let mut textarea = [TextArea::default(), TextArea::default()];
-                let mut which: usize = 0;
+                let which: usize = 0;
 
                 textarea[0].set_cursor_line_style(Style::default());
                 textarea[0].set_placeholder_text("Short To-Do Description...");
@@ -196,7 +195,7 @@ impl<'a> App<'a> {
                         .title("Description")
                         .style(Style::default().fg(Color::DarkGray)),
                 );
-                Modal::Active(textarea, which)
+                Modal::Active(textarea, which, ModalType::New)
             }
             _ => Modal::Inactive,
         }
