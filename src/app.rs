@@ -116,6 +116,14 @@ impl ToDoState {
             None => {}
         }
     }
+    pub fn get_selected_todo(&mut self) -> Option<&ToDoItem> {
+        match self.state.selected() {
+            Some(i) => {
+                return Some(&self.items[i]);
+            }
+            None => None 
+        }
+    }
 }
 
 pub enum Modal<'a> {
@@ -123,6 +131,7 @@ pub enum Modal<'a> {
     Active([TextArea<'a>; 2], usize, ModalType),
 }
 
+#[derive(PartialEq)]
 pub enum ModalType {
     Inactive,
     New,
@@ -195,6 +204,17 @@ impl<'a> App<'a> {
                         .title("Description")
                         .style(Style::default().fg(Color::DarkGray)),
                 );
+
+                if (modal_type == ModalType::View) {
+                    match self.todo.get_selected_todo() {
+                        Some(todo) => {
+                            textarea[0].insert_str(&todo.title);
+                            textarea[1].insert_str(&todo.description);
+                        }
+                        // To do: error handling if the selected todo doesn't return anything
+                        None => {}
+                    }    
+                }
                 Modal::Active(textarea, which, ModalType::New)
             }
             _ => Modal::Inactive,
