@@ -58,7 +58,7 @@ fn main() -> Result<()> {
                     f.render_widget(textareas[0].widget(), layout[0]);
                     f.render_widget(textareas[1].widget(), layout[1]);
                 }
-                _ => ()
+                _ => (),
             }
         })?;
 

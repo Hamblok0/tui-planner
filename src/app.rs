@@ -121,7 +121,7 @@ impl ToDoState {
             Some(i) => {
                 return Some(&self.items[i]);
             }
-            None => None 
+            None => None,
         }
     }
 }
@@ -184,11 +184,10 @@ impl<'a> App<'a> {
     }
 
     pub fn toggle_modal(&mut self, modal_type: ModalType) {
+        let mut textarea = [TextArea::default(), TextArea::default()];
+        let which: usize = 0;
         self.modal = match modal_type {
-            ModalType::New | ModalType::View => {
-                let mut textarea = [TextArea::default(), TextArea::default()];
-                let which: usize = 0;
-
+            ModalType::New => {
                 textarea[0].set_cursor_line_style(Style::default());
                 textarea[0].set_placeholder_text("Short To-Do Description...");
                 textarea[0].set_block(
@@ -205,18 +204,37 @@ impl<'a> App<'a> {
                         .style(Style::default().fg(Color::DarkGray)),
                 );
 
-                if (modal_type == ModalType::View) {
-                    match self.todo.get_selected_todo() {
-                        Some(todo) => {
-                            textarea[0].insert_str(&todo.title);
-                            textarea[1].insert_str(&todo.description);
-                        }
-                        // To do: error handling if the selected todo doesn't return anything
-                        None => {}
-                    }    
-                }
                 Modal::Active(textarea, which, ModalType::New)
             }
+            ModalType::View => match self.todo.get_selected_todo() {
+                Some(todo) => {
+                    textarea[0].set_cursor_line_style(Style::default());
+                    textarea[0].set_cursor_style(Style::default());
+                    textarea[0].set_placeholder_text("Short To-Do Description...");
+                    textarea[0].set_block(
+                        Block::default()
+                            .borders(Borders::ALL)
+                            .title("Title")
+                            .style(Style::default()),
+                    );
+                    textarea[1].set_cursor_line_style(Style::default());
+                    textarea[1].set_cursor_style(Style::default());
+                    textarea[1].set_placeholder_text("Details (Optional)...");
+                    textarea[1].set_block(
+                        Block::default()
+                            .borders(Borders::ALL)
+                            .title("Description")
+                            .style(Style::default()),
+                    );
+                    textarea[0].insert_str(&todo.title);
+                    textarea[1].insert_str(&todo.description);
+
+                    Modal::Active(textarea, which, ModalType::View)
+                }
+                None => {
+                    panic!("Error: ToDoItem did not return a value")
+                }
+            },
             _ => Modal::Inactive,
         }
     }
