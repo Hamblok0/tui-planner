@@ -65,25 +65,39 @@ fn main() -> Result<()> {
         if let crossterm::event::Event::Key(key) = crossterm::event::read()? {
             if key.kind == crossterm::event::KeyEventKind::Press {
                 match app.modal {
-                    Modal::Active(ref mut textareas, which, ref modal_type) => match key.into() {
-                        Input { key: Key::Esc, .. } => {
-                            app.toggle_modal(ModalType::Inactive);
-                        }
-                        Input {
-                            key: Key::Enter, ..
-                        } => {
-                            app.todo.create_task(
-                                textareas[0].lines().join(""),
-                                textareas[1].lines().join(""),
-                            );
-                            app.toggle_modal(ModalType::Inactive);
-                        }
-                        Input { key: Key::Tab, .. } => {
-                            app.modal.change_focus();
-                        }
-                        input => {
-                            textareas[which].input(input);
-                        }
+                    Modal::Active(ref mut textareas, which, ref modal_type) => match modal_type {
+                        ModalType::New => match key.into() {
+                            Input { key: Key::Esc, .. } => {
+                                app.toggle_modal(ModalType::Inactive);
+                            }
+                            Input {
+                                key: Key::Enter, ..
+                            } => {
+                                app.todo.create_task(
+                                    textareas[0].lines().join(""),
+                                    textareas[1].lines().join(""),
+                                );
+                                app.toggle_modal(ModalType::Inactive);
+                            }
+                            Input { key: Key::Tab, .. } => {
+                                app.modal.change_focus();
+                            }
+                            input => {
+                                textareas[which].input(input);
+                            }
+                        },
+                        ModalType::View => match key.into() {
+                            Input { key: Key::Esc, .. } => {
+                                app.toggle_modal(ModalType::Inactive);
+                            }
+                            Input {
+                                key: Key::Enter, ..
+                            } => {
+                                app.toggle_modal(ModalType::Inactive);
+                            }
+                            input => {}
+                        },
+                        _ => {}
                     },
                     Modal::Inactive => match key.code {
                         crossterm::event::KeyCode::Char('q') => break,
