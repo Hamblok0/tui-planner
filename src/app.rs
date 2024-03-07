@@ -119,16 +119,16 @@ impl ToDoState {
     pub fn overwrite_task(&mut self, title: String, description: String) {
         match self.state.selected() {
             Some(i) => {
-              let todo = &mut self.items[i];
+                let todo = &mut self.items[i];
 
-              if title != todo.title {
-                todo.title = title;
-              }
-              if description != todo.description {
-                todo.description = description;
-              }
+                if title != todo.title {
+                    todo.title = title;
+                }
+                if description != todo.description {
+                    todo.description = description;
+                }
             }
-            None => {},
+            None => {}
         }
     }
     pub fn get_selected_todo(&mut self) -> Option<&ToDoItem> {
