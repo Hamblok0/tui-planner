@@ -13,8 +13,10 @@ use std::io::stdout;
 
 mod app;
 mod key_events;
-use crate::app::{App, Modal};
+mod todo;
+use crate::app::{App};
 use crate::key_events::*;
+use crate::todo::Modal;
 
 fn main() -> Result<()> {
     enable_raw_mode()?;
