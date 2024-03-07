@@ -95,7 +95,30 @@ fn main() -> Result<()> {
                             } => {
                                 app.toggle_modal(ModalType::Inactive);
                             }
+                            Input { key: Key::Char('e'), .. } => {
+                                app.toggle_modal(ModalType::Edit);
+                            }
                             input => {}
+                        },
+                        ModalType::Edit => match key.into() {
+                            Input { key: Key::Esc, .. } => {
+                                app.toggle_modal(ModalType::View);
+                            }
+                            Input {
+                                key: Key::Enter, ..
+                            } => {
+                                app.todo.overwrite_task(
+                                    textareas[0].lines().join(""),
+                                    textareas[1].lines().join(""),
+                                );
+                                app.toggle_modal(ModalType::View);
+                            }
+                            Input { key: Key::Tab, .. } => {
+                                app.modal.change_focus();
+                            }
+                            input => {
+                                textareas[which].input(input);
+                            }
                         },
                         _ => {}
                     },
@@ -107,6 +130,12 @@ fn main() -> Result<()> {
                         crossterm::event::KeyCode::Char('d') => app.todo.delete_task(),
                         crossterm::event::KeyCode::Char('n') => app.toggle_modal(ModalType::New),
                         crossterm::event::KeyCode::Char('v') => app.toggle_modal(ModalType::View),
+                        crossterm::event::KeyCode::Char('e') => {
+                           match app.todo.state.selected() {
+                            Some(_) => app.toggle_modal(ModalType::Edit),
+                            None => {}
+                           } 
+                        },
                         _ => {}
                     },
                     _ => (),

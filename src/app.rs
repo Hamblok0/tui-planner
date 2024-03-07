@@ -116,6 +116,21 @@ impl ToDoState {
             None => {}
         }
     }
+    pub fn overwrite_task(&mut self, title: String, description: String) {
+        match self.state.selected() {
+            Some(i) => {
+              let todo = &mut self.items[i];
+
+              if title != todo.title {
+                todo.title = title;
+              }
+              if description != todo.description {
+                todo.description = description;
+              }
+            }
+            None => {},
+        }
+    }
     pub fn get_selected_todo(&mut self) -> Option<&ToDoItem> {
         match self.state.selected() {
             Some(i) => {
@@ -136,6 +151,7 @@ pub enum ModalType {
     Inactive,
     New,
     View,
+    Edit,
 }
 
 impl<'a> Modal<'a> {
@@ -230,6 +246,32 @@ impl<'a> App<'a> {
                     textarea[1].insert_str(&todo.description);
 
                     Modal::Active(textarea, which, ModalType::View)
+                }
+                None => {
+                    panic!("Error: ToDoItem did not return a value")
+                }
+            },
+            ModalType::Edit => match self.todo.get_selected_todo() {
+                Some(todo) => {
+                    textarea[0].set_cursor_line_style(Style::default());
+                    textarea[0].set_placeholder_text("Short To-Do Description...");
+                    textarea[0].set_block(
+                        Block::default()
+                            .borders(Borders::ALL)
+                            .title("Title")
+                            .style(Style::default()),
+                    );
+                    textarea[1].set_placeholder_text("Details (Optional)...");
+                    textarea[1].set_block(
+                        Block::default()
+                            .borders(Borders::ALL)
+                            .title("Description")
+                            .style(Style::default().fg(Color::DarkGray)),
+                    );
+                    textarea[0].insert_str(&todo.title);
+                    textarea[1].insert_str(&todo.description);
+
+                    Modal::Active(textarea, which, ModalType::Edit)
                 }
                 None => {
                     panic!("Error: ToDoItem did not return a value")
