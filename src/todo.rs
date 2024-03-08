@@ -1,7 +1,8 @@
 use ratatui::{prelude::*, widgets::*};
 use tui_textarea::TextArea;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct ToDoItem {
     pub title: String,
     pub description: String,
