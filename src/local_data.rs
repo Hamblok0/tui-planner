@@ -32,10 +32,10 @@ pub fn load_session() -> Option<SessionData> {
     unimplemented!()
 }
 
-fn write(path: String) -> Result<String> {
+fn write(path: String) -> Result<()> {
     unimplemented!()
 }
 
-fn read(path: String) -> Result<String> {
+fn read(path: String) -> Result<()> {
     unimplemented!()
 } 
