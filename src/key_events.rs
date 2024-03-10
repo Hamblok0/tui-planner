@@ -2,6 +2,7 @@ use tui_textarea::{Input, Key};
 
 use crate::app::*;
 use crate::todo::*;
+use crate::local_data::save_session;
 
 pub fn key_events(app: &mut App) -> Option<usize> {
     if let Ok(crossterm::event::Event::Key(key)) = crossterm::event::read() {
@@ -79,6 +80,7 @@ pub fn key_events(app: &mut App) -> Option<usize> {
                         Some(_) => app.toggle_modal(ModalType::Edit),
                         None => {}
                     },
+                    crossterm::event::KeyCode::Char('s') => save_session(&app.todo.items),
                     _ => {}
                 },
                 _ => (),
