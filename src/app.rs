@@ -2,6 +2,7 @@ use ratatui::{prelude::*, widgets::*};
 use tui_textarea::TextArea;
 
 use crate::todo::*;
+use crate::local_data::load_session;
 
 pub struct App<'a> {
     pub todo: ToDoState,
@@ -10,8 +11,12 @@ pub struct App<'a> {
 
 impl<'a> App<'a> {
     pub fn new() -> App<'a> {
+        let items = match load_session() {
+            Some(data) => data,
+            None => vec![]
+        };
         App {
-            todo: ToDoState::new(vec![]),
+            todo: ToDoState::new(items),
             modal: Modal::Inactive,
         }
     }
