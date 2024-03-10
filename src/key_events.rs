@@ -1,8 +1,8 @@
 use tui_textarea::{Input, Key};
 
 use crate::app::*;
-use crate::todo::*;
 use crate::local_data::save_session;
+use crate::todo::*;
 
 pub fn key_events(app: &mut App) -> Option<usize> {
     if let Ok(crossterm::event::Event::Key(key)) = crossterm::event::read() {

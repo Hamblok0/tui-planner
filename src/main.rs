@@ -13,8 +13,8 @@ use std::io::stdout;
 
 mod app;
 mod key_events;
-mod todo;
 mod local_data;
+mod todo;
 use crate::app::App;
 use crate::key_events::*;
 use crate::todo::Modal;
