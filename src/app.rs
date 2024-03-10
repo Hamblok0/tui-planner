@@ -4,9 +4,16 @@ use tui_textarea::TextArea;
 use crate::todo::*;
 use crate::local_data::load_session;
 
+#[derive(PartialEq)]
+pub enum View {
+    Main,
+    Modal
+}
+
 pub struct App<'a> {
     pub todo: ToDoState,
     pub modal: Modal<'a>,
+    pub view: View
 }
 
 impl<'a> App<'a> {
@@ -18,6 +25,7 @@ impl<'a> App<'a> {
         App {
             todo: ToDoState::new(items),
             modal: Modal::Inactive,
+            view: View::Main
         }
     }
 
