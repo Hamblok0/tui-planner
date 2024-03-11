@@ -15,9 +15,8 @@ mod app;
 mod key_events;
 mod local_data;
 mod todo;
-use crate::app::App;
+use crate::app::{View, App};
 use crate::key_events::*;
-use crate::todo::Modal;
 
 fn main() -> Result<()> {
     enable_raw_mode()?;
@@ -50,17 +49,17 @@ fn main() -> Result<()> {
 
             f.render_stateful_widget(list, area, &mut app.todo.state);
 
-            match app.modal {
-                Modal::Active(ref textareas, _, _) => {
-                    let area = app.modal.get_center(f.size());
+            match app.view {
+                View::Modal(ref modal) => {
+                    let area = modal.get_center(f.size());
                     let layout = Layout::new(
                         Direction::Vertical,
                         [Constraint::Percentage(10), Constraint::Percentage(90)],
                     )
                     .split(area);
                     f.render_widget(Clear, area);
-                    f.render_widget(textareas[0].widget(), layout[0]);
-                    f.render_widget(textareas[1].widget(), layout[1]);
+                    f.render_widget(modal.textareas[0].widget(), layout[0]);
+                    f.render_widget(modal.textareas[1].widget(), layout[1]);
                 }
                 _ => (),
             }

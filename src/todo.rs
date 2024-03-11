@@ -142,26 +142,25 @@ impl ToDoState {
     }
 }
 
-pub enum Modal<'a> {
-    Inactive,
-    Active([TextArea<'a>; 2], usize, ModalType),
+pub struct ToDoModal<'a> {
+    pub textareas: [TextArea<'a>; 2],
+    pub which: usize,
+    pub mode: ModalMode,
 }
 
 #[derive(PartialEq)]
-pub enum ModalType {
+pub enum ModalMode {
     Inactive,
     New,
     View,
     Edit,
 }
 
-impl<'a> Modal<'a> {
+impl<'a> ToDoModal<'a> {
     pub fn change_focus(&mut self) {
-        if let Modal::Active(ref mut textareas, ref mut which, _) = self {
-            deactivate(&mut textareas[*which], which);
-            *which = (*which + 1) % 2;
-            activate(&mut textareas[*which], which);
-        }
+        deactivate(&mut self.textareas[self.which], &mut self.which);
+        self.which = (self.which + 1) % 2;
+        activate(&mut self.textareas[self.which], &mut self.which);
     }
 
     pub fn get_center(&self, r: Rect) -> Rect {
