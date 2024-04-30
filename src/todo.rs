@@ -60,6 +60,10 @@ impl ToDoState {
     }
 
     pub fn next(&mut self) {
+        if self.items.len() == 0 {
+            return
+        }
+
         let i = match self.state.selected() {
             Some(i) => {
                 if i >= self.items.len() - 1 {
@@ -74,6 +78,10 @@ impl ToDoState {
     }
 
     pub fn previous(&mut self) {
+        if self.items.len() == 0 {
+            return
+        }
+
         let i = match self.state.selected() {
             Some(i) => {
                 if i == 0 {
