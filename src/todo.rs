@@ -2,6 +2,8 @@ use ratatui::{prelude::*, widgets::*};
 use serde::{Deserialize, Serialize};
 use tui_textarea::TextArea;
 
+use crate::local_data::*;
+
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct ToDoItem {
     pub title: String,
@@ -103,6 +105,7 @@ impl ToDoState {
         match self.state.selected() {
             Some(i) => {
                 self.items[i].complete = !self.items[i].complete;
+                save_session(&self.items);
             }
             None => {}
         }
@@ -114,6 +117,7 @@ impl ToDoState {
             description,
             complete: false,
         });
+        save_session(&self.items);
     }
 
     pub fn delete_task(&mut self) {
@@ -121,6 +125,7 @@ impl ToDoState {
             Some(i) => {
                 self.items.remove(i);
                 self.unselect();
+                save_session(&self.items);
             }
             None => {}
         }
@@ -136,6 +141,7 @@ impl ToDoState {
                 if description != todo.description {
                     todo.description = description;
                 }
+                save_session(&self.items);
             }
             None => {}
         }
