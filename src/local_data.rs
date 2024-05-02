@@ -13,10 +13,6 @@ pub struct SessionData {
 }
 
 pub fn save_session(data: &Vec<ToDoItem>) {
-    if data.len() == 0 {
-        return;
-    }
-
     let path = path();
     let file = if !Path::new(&path).exists() {
         File::create(path).unwrap()
