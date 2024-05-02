@@ -1,1 +1,1 @@
-Simple TUI day planner/todo/timer app in Rust with ratatui-rs.
+Very simple, straight forward to-do app and timer built in Rust with [Ratatui](https://ratatui.rs/) 
