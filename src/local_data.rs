@@ -5,6 +5,7 @@ use std::env::var_os;
 use std::fs::{File, OpenOptions};
 use std::io::{BufWriter, Write};
 use std::path::Path;
+use rusqlite::{Connection, Result};
 
 // Placeholder for when session data includes more than just todos.
 #[derive(Debug, Deserialize, Serialize)]
