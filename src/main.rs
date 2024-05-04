@@ -15,6 +15,8 @@ mod app;
 mod key_events;
 mod local_data;
 mod todo;
+mod db;
+
 use crate::app::{View, App};
 use crate::key_events::*;
 
