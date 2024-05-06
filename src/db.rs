@@ -15,11 +15,13 @@ impl DB {
 
         let db = Connection::open(path).unwrap();
 
+        let result = db.execute("SELECT EXISTS(SELECT 1 FROM sqlite_master WHERE type=\"table\" AND name = (?1))", params!["session"]).unwrap();
+
+        println!("{:?}", result);
+
         Self {
             db
         }
-        
-        //let result = db.execute("SELECT EXISTS(SELECT 1 FROM sqlite_master WHERE type="table" AND name = "tpsession")", ());
 
     }
 }

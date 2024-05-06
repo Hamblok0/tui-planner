@@ -5,10 +5,6 @@ use crate::app::*;
 use crate::local_data::save_session;
 use crate::todo::*;
 
-pub trait KeyControls {
-    fn key_controls(&self, key: KeyEvent);
-}
-// To do: make this more generic, create a trait and then define key controls in individual struct's implementation
 pub fn key_events(app: &mut App) -> Option<usize> {
     if let Ok(crossterm::event::Event::Key(key)) = crossterm::event::read() {
         if key.kind == crossterm::event::KeyEventKind::Press {

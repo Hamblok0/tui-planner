@@ -1,28 +1,34 @@
 use ratatui::{prelude::*, widgets::*};
+use rusqlite::Connection;
 use tui_textarea::TextArea;
 
-use crate::todo::*;
+use crate::db::DB;
 use crate::local_data::load_session;
+use crate::todo::*;
 
 pub enum View<'a> {
     Main,
-    Modal(ToDoModal<'a>)
+    Modal(ToDoModal<'a>),
 }
 
 pub struct App<'a> {
     pub todo: ToDoState,
-    pub view: View<'a>
+    pub view: View<'a>,
+    pub db: DB,
 }
 
 impl<'a> App<'a> {
     pub fn new() -> App<'a> {
+        let db: DB = DB::new();
+
         let items = match load_session() {
             Some(data) => data,
-            None => vec![]
+            None => vec![],
         };
         App {
             todo: ToDoState::new(items),
-            view: View::Main
+            view: View::Main,
+            db,
         }
     }
 
@@ -47,7 +53,11 @@ impl<'a> App<'a> {
                         .style(Style::default().fg(Color::DarkGray)),
                 );
 
-                View::Modal(ToDoModal {textareas, which, mode: ModalMode::New})
+                View::Modal(ToDoModal {
+                    textareas,
+                    which,
+                    mode: ModalMode::New,
+                })
             }
             ModalMode::View => match self.todo.get_selected_todo() {
                 Some(todo) => {
@@ -72,7 +82,11 @@ impl<'a> App<'a> {
                     textareas[0].insert_str(&todo.title);
                     textareas[1].insert_str(&todo.description);
 
-                    View::Modal(ToDoModal {textareas, which, mode: ModalMode::View})
+                    View::Modal(ToDoModal {
+                        textareas,
+                        which,
+                        mode: ModalMode::View,
+                    })
                 }
                 None => {
                     panic!("Error: ToDoItem did not return a value")
@@ -98,7 +112,11 @@ impl<'a> App<'a> {
                     textareas[0].insert_str(&todo.title);
                     textareas[1].insert_str(&todo.description);
 
-                    View::Modal(ToDoModal {textareas, which, mode: ModalMode::Edit})
+                    View::Modal(ToDoModal {
+                        textareas,
+                        which,
+                        mode: ModalMode::Edit,
+                    })
                 }
                 None => {
                     panic!("Error: ToDoItem did not return a value")
