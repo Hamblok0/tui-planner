@@ -1,5 +1,7 @@
+use crossterm::terminal::is_raw_mode_enabled;
 use rusqlite::{params, Connection, Result};
 use std::path::Path;
+use std::env::var_os;
 
 pub struct DB {
     db: Connection,
@@ -11,9 +13,13 @@ impl DB {
         let home_str = home_var.to_str().unwrap();
         let path = format!("{home_str}/Documents/tpsession.db3");
 
-        let db = Connection::open(path)?;
+        let db = Connection::open(path).unwrap();
 
-        if db.execute("SELECT EXISTS(SELECT 1 FROM sqlite_master WHERE type="table" AND name = "tpsession")", params)
+        Self {
+            db
+        }
+        
+        //let result = db.execute("SELECT EXISTS(SELECT 1 FROM sqlite_master WHERE type="table" AND name = "tpsession")", ());
 
     }
 }
