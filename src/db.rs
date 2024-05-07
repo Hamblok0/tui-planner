@@ -1,7 +1,8 @@
-use crossterm::terminal::is_raw_mode_enabled;
 use rusqlite::{params, Connection, Result};
 use std::path::Path;
 use std::env::var_os;
+
+use crate::todo::ToDoItem;
 
 pub struct DB {
     db: Connection,
@@ -13,15 +14,23 @@ impl DB {
         let home_str = home_var.to_str().unwrap();
         let path = format!("{home_str}/Documents/tpsession.db3");
 
-        let db = Connection::open(path).unwrap();
+        let db = Connection::open(&path).unwrap();
 
-        let result = db.execute("SELECT EXISTS(SELECT 1 FROM sqlite_master WHERE type=\"table\" AND name = (?1))", params!["session"]).unwrap();
-
-        println!("{:?}", result);
+        if Path::new(&path).exists() {
+            db.execute("CREATE TABLE todos (
+                id INTEGER PRIMARY KEY,
+                title TEXT NOT NULL,
+                description TEXT,
+                complete BOOLEAN NOT NULL
+            )", ()).unwrap();
+        }
 
         Self {
             db
         }
-
     }
+
+    // pub fn write_todos(&self, data: &Vec<ToDoItem>) -> Result<()> {
+    //     self.db.execute("", ())?;
+    // }
 }
