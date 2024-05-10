@@ -62,10 +62,19 @@ impl DB {
 
     pub fn create_todo(&self, title: &str, description: &str) -> Result<usize> {
         self.db.execute(
-            "INSERT INTO todos (t, d, c) VALUES (?1, ?2, ?3",
+            "INSERT INTO todos (t, d, c) VALUES (?1, ?2, ?3)",
             (title, description, false),
         )?;
     
         Ok(self.db.last_insert_rowid() as usize)
+    }
+
+    pub fn delete_todo(&self, id: &usize) -> Result<()> {
+        self.db.execute(
+            "DELETE FROM todos WHERE id = (?1)",
+            params![id]
+        )?;
+
+        Ok(())
     }
 }

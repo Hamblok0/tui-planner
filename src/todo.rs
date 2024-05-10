@@ -123,12 +123,13 @@ impl ToDoState {
         });
     }
 
-    pub fn delete_task(&mut self) {
+    pub fn remove_task(&mut self, db: &DB) {
         match self.state.selected() {
             Some(i) => {
+                db.delete_todo(&self.items[i].id);
+
                 self.items.remove(i);
                 self.unselect();
-                save_session(&self.items);
             }
             None => {}
         }

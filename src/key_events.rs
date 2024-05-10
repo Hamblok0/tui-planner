@@ -2,7 +2,6 @@ use crossterm::event::KeyEvent;
 use tui_textarea::{Input, Key};
 
 use crate::app::*;
-use crate::db::*;
 use crate::todo::*;
 
 pub fn key_events(app: &mut App) -> Option<usize> {
@@ -75,14 +74,14 @@ pub fn key_events(app: &mut App) -> Option<usize> {
                     crossterm::event::KeyCode::Char('c') => app.todo.toggle_complete(),
                     crossterm::event::KeyCode::Char('j') => app.todo.next(),
                     crossterm::event::KeyCode::Char('k') => app.todo.previous(),
-                    crossterm::event::KeyCode::Char('d') => app.todo.delete_task(),
+                    crossterm::event::KeyCode::Char('d') => app.todo.remove_task(&app.db),
                     crossterm::event::KeyCode::Char('n') => app.toggle_modal(ModalMode::New),
                     crossterm::event::KeyCode::Char('v') => app.toggle_modal(ModalMode::View),
                     crossterm::event::KeyCode::Char('e') => match app.todo.state.selected() {
                         Some(_) => app.toggle_modal(ModalMode::Edit),
                         None => {}
                     },
-                    crossterm::event::KeyCode::Char('s') => save_session(&app.todo.items),
+                    // crossterm::event::KeyCode::Char('s') => save_session(&app.todo.items),
                     _ => {}
                 },
                 _ => (),
