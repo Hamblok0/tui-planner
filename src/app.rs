@@ -20,11 +20,12 @@ pub struct App<'a> {
 impl<'a> App<'a> {
     pub fn new() -> App<'a> {
         let db: DB = DB::new();
-        db.get_todos();
-        let items = match load_session() {
+
+        let items = match load_session(&db) {
             Some(data) => data,
             None => vec![],
         };
+
         App {
             todo: ToDoState::new(items),
             view: View::Main,

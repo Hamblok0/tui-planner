@@ -1,10 +1,12 @@
-use crate::todo::ToDoItem;
 use serde::{Deserialize, Serialize};
 use serde_json::{from_reader, to_writer};
 use std::env::var_os;
 use std::fs::{File, OpenOptions};
 use std::io::{BufWriter, Write};
 use std::path::Path;
+
+use crate::todo::ToDoItem;
+use crate::db::DB;
 
 // Placeholder for when session data includes more than just todos.
 #[derive(Debug, Deserialize, Serialize)]
@@ -30,16 +32,8 @@ pub fn save_session(data: &Vec<ToDoItem>) {
     writer.flush().unwrap();
 }
 
-// To do: validate file structure before passing data back.
-pub fn load_session() -> Option<Vec<ToDoItem>> {
-    let path = path();
-
-    if !Path::new(&path).exists() {
-        return None;
-    }
-
-    let file = File::open(&path).unwrap();
-    let todo_items: Vec<ToDoItem> = from_reader(file).unwrap();
+pub fn load_session(db: &DB) -> Option<Vec<ToDoItem>> {
+    let todo_items: Vec<ToDoItem> = db.get_todos().unwrap();
 
     return Some(todo_items);
 }

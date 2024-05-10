@@ -1,6 +1,7 @@
-use rusqlite::{params, Connection, Result, Rows};
+use rusqlite::{params, Connection, Result, Rows, Row};
 use std::path::Path;
 use std::env::var_os;
+use fallible_iterator::FallibleIterator; 
 
 use crate::todo::ToDoItem;
 use crate::local_data::load_session;
@@ -37,9 +38,22 @@ impl DB {
         }
     }
 
-    pub fn get_todos(&self) {
+    pub fn get_todos(&self) -> Result<Vec<ToDoItem>> {
         let mut stmt = self.db.prepare("SELECT * FROM todos").unwrap();
-        let rows: Rows = stmt.query([]).unwrap();
-             
+        let mut rows: Rows = stmt.query([]).unwrap();
+
+        let row_closure = |row: &Row| -> Result<ToDoItem> {
+            let title = row.get(1)?;
+            let description = row.get(2)?;
+            let complete = row.get(3)?; 
+
+            Ok(ToDoItem {
+                title,
+                description,
+                complete
+            })
+        };
+
+        rows.map(row_closure).collect()
     }
 }

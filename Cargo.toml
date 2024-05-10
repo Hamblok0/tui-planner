@@ -9,6 +9,7 @@ opt-level = 1
 [dependencies]
 anyhow = "1.0.82"
 crossterm = "0.27.0"
+fallible-iterator = "0.3.0"
 ratatui = "0.26.2"
 rusqlite = { version = "0.31.0", features = ["bundled"] }
 serde = { version = "1.0.200", features = ["derive"] }
