@@ -35,11 +35,12 @@ pub fn save_session(data: &Vec<ToDoItem>) {
 pub fn load_session(db: &DB) -> Option<Vec<ToDoItem>> {
     let todo_items: Vec<ToDoItem> = db.get_todos().unwrap();
 
-    return Some(todo_items);
+    Some(todo_items)
 }
 
 fn path() -> String {
     let home_var = var_os("HOME").unwrap();
     let home_str = home_var.to_str().unwrap();
-    return format!("{home_str}/Documents/tpsession.json");
+
+    format!("{home_str}/Documents/tpsession.json")
 }

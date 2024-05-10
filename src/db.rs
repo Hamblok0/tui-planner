@@ -4,7 +4,6 @@ use std::env::var_os;
 use fallible_iterator::FallibleIterator; 
 
 use crate::todo::ToDoItem;
-use crate::local_data::load_session;
 
 pub struct DB {
     db: Connection,
@@ -39,8 +38,8 @@ impl DB {
     }
 
     pub fn get_todos(&self) -> Result<Vec<ToDoItem>> {
-        let mut stmt = self.db.prepare("SELECT * FROM todos").unwrap();
-        let mut rows: Rows = stmt.query([]).unwrap();
+        let mut stmt = self.db.prepare("SELECT * FROM todos")?;
+        let mut rows: Rows = stmt.query([])?;
 
         let row_closure = |row: &Row| -> Result<ToDoItem> {
             let title = row.get(1)?;
