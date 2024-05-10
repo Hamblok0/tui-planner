@@ -2,10 +2,11 @@ use ratatui::{prelude::*, widgets::*};
 use serde::{Deserialize, Serialize};
 use tui_textarea::TextArea;
 
-use crate::local_data::*;
+use crate::db::DB;
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct ToDoItem {
+    pub id: usize,
     pub title: String,
     pub description: String,
     pub complete: bool,
@@ -105,19 +106,21 @@ impl ToDoState {
         match self.state.selected() {
             Some(i) => {
                 self.items[i].complete = !self.items[i].complete;
-                save_session(&self.items);
+                // save_session(&self.items);
             }
             None => {}
         }
     }
 
-    pub fn create_task(&mut self, title: String, description: String) {
+    pub fn create_task(&mut self, db: &DB, title: String, description: String) {    
+        let id = db.create_todo(&title, &description).unwrap();
+        
         self.items.push(ToDoItem {
+            id,
             title,
             description,
             complete: false,
         });
-        save_session(&self.items);
     }
 
     pub fn delete_task(&mut self) {

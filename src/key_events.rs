@@ -2,7 +2,7 @@ use crossterm::event::KeyEvent;
 use tui_textarea::{Input, Key};
 
 use crate::app::*;
-use crate::local_data::save_session;
+use crate::db::*;
 use crate::todo::*;
 
 pub fn key_events(app: &mut App) -> Option<usize> {
@@ -18,6 +18,7 @@ pub fn key_events(app: &mut App) -> Option<usize> {
                             key: Key::Enter, ..
                         } => {
                             app.todo.create_task(
+                                &app.db,
                                 modal.textareas[0].lines().join(""),
                                 modal.textareas[1].lines().join(""),
                             );
