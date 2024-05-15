@@ -65,38 +65,40 @@ impl DB {
             "INSERT INTO todos (t, d, c) VALUES (?1, ?2, ?3)",
             (title, description, false),
         )?;
-    
+
         Ok(self.db.last_insert_rowid() as usize)
     }
 
     pub fn delete_todo(&self, id: &usize) -> Result<()> {
-        self.db.execute(
-            "DELETE FROM todos WHERE id = (?1)",
-            params![id]
-        )?;
+        self.db
+            .execute("DELETE FROM todos WHERE id = (?1)", params![id])?;
 
         Ok(())
     }
 
     pub fn edit_todo(&self, todo: &ToDoItem, old_todo: ToDoItem) -> Result<()> {
-        let title = if todo.title != old_todo.title {
-           let title = &todo.title;
-           format!("title = '{title}'")
+        let id = todo.id;
+
+        let mut title = if todo.title != old_todo.title {
+            let title = &todo.title;
+            format!("title = '{title}'")
         } else {
             "".to_string()
         };
 
         let description = if todo.description != old_todo.description {
-           let description = &todo.description;
-           format!(", description = '{description}'")
+            let description = &todo.description;
+            if !title.is_empty() {
+                title.push_str(", ");
+            }
+            format!("description = '{description}'")
         } else {
             "".to_string()
         };
 
-        let id = todo.id;
         let command = format!("UPDATE todos SET {title} {description} WHERE id = {id}");
 
-        self.db.execute(&command, ()).unwrap(); 
+        self.db.execute(&command, ()).unwrap();
 
         Ok(())
     }
