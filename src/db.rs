@@ -62,7 +62,7 @@ impl DB {
 
     pub fn create_todo(&self, title: &str, description: &str) -> Result<usize> {
         self.db.execute(
-            "INSERT INTO todos (t, d, c) VALUES (?1, ?2, ?3)",
+            "INSERT INTO todos (title, description, complete) VALUES (?1, ?2, ?3)",
             (title, description, false),
         )?;
 
