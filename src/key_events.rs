@@ -55,6 +55,7 @@ pub fn key_events(app: &mut App) -> Option<usize> {
                             key: Key::Enter, ..
                         } => {
                             app.todo.overwrite_task(
+                                &app.db,
                                 modal.textareas[0].lines().join(""),
                                 modal.textareas[1].lines().join(""),
                             );

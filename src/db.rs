@@ -77,4 +77,27 @@ impl DB {
 
         Ok(())
     }
+
+    pub fn edit_todo(&self, todo: &ToDoItem, old_todo: ToDoItem) -> Result<()> {
+        let title = if todo.title != old_todo.title {
+           let title = &todo.title;
+           format!("title = '{title}'")
+        } else {
+            "".to_string()
+        };
+
+        let description = if todo.description != old_todo.description {
+           let description = &todo.description;
+           format!(", description = '{description}'")
+        } else {
+            "".to_string()
+        };
+
+        let id = todo.id;
+        let command = format!("UPDATE todos SET {title} {description} WHERE id = {id}");
+
+        self.db.execute(&command, ()).unwrap(); 
+
+        Ok(())
+    }
 }

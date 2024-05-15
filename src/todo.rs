@@ -126,7 +126,7 @@ impl ToDoState {
     pub fn remove_task(&mut self, db: &DB) {
         match self.state.selected() {
             Some(i) => {
-                db.delete_todo(&self.items[i].id);
+                db.delete_todo(&self.items[i].id).unwrap();
 
                 self.items.remove(i);
                 self.unselect();
@@ -134,18 +134,26 @@ impl ToDoState {
             None => {}
         }
     }
-    pub fn overwrite_task(&mut self, title: String, description: String) {
+    pub fn overwrite_task(&mut self, db:&DB, title: String, description: String) {
         match self.state.selected() {
             Some(i) => {
-                let todo = &mut self.items[i];
+                let todo: &mut ToDoItem = &mut self.items[i]; 
+                let old_todo = ToDoItem {
+                    id: todo.id.clone(),
+                    title: todo.title.clone(),
+                    description: todo.description.clone(),
+                    complete: todo.complete.clone()
+                };
 
                 if title != todo.title {
                     todo.title = title;
                 }
+
                 if description != todo.description {
                     todo.description = description;
                 }
-                save_session(&self.items);
+
+                db.edit_todo(todo, old_todo).unwrap();
             }
             None => {}
         }
