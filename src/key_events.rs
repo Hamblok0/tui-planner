@@ -49,7 +49,7 @@ pub fn key_events(app: &mut App) -> Option<usize> {
                     },
                     ModalMode::Edit => match key.into() {
                         Input { key: Key::Esc, .. } => {
-                            app.toggle_modal(ModalMode::View);
+                            app.toggle_modal(ModalMode::Inactive);
                         }
                         Input {
                             key: Key::Enter, ..
@@ -59,7 +59,7 @@ pub fn key_events(app: &mut App) -> Option<usize> {
                                 modal.textareas[0].lines().join(""),
                                 modal.textareas[1].lines().join(""),
                             );
-                            app.toggle_modal(ModalMode::View);
+                            app.toggle_modal(ModalMode::Inactive);
                         }
                         Input { key: Key::Tab, .. } => {
                             modal.change_focus();
