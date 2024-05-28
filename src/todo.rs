@@ -102,11 +102,11 @@ impl ToDoState {
         self.state.select(None);
     }
 
-    pub fn toggle_complete(&mut self) {
+    pub fn toggle_complete(&mut self, db: &DB) {
         match self.state.selected() {
             Some(i) => {
                 self.items[i].complete = !self.items[i].complete;
-                // save_session(&self.items);
+                db.toggle_todo(&self.items[i]);
             }
             None => {}
         }

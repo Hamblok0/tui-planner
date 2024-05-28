@@ -102,4 +102,14 @@ impl DB {
 
         Ok(())
     }
+
+    pub fn toggle_todo(&self, todo: &ToDoItem) -> Result<()> {
+        let complete = todo.complete;
+        let id = todo.id;
+        let command = format!("UPDATE todos SET complete = {complete} WHERE id = {id}");
+
+        self.db.execute(&command, ()).unwrap();
+
+        Ok(())
+    }
 }
