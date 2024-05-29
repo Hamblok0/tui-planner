@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 use std::env::var_os;
 
-use crate::todo::ToDoItem;
 use crate::db::DB;
+use crate::todo::ToDoItem;
 
 // Placeholder for when session data includes more than just todos.
 #[derive(Debug, Deserialize, Serialize)]

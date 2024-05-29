@@ -1,5 +1,4 @@
 use ratatui::{prelude::*, widgets::*};
-use rusqlite::Connection;
 use tui_textarea::TextArea;
 
 use crate::db::DB;

@@ -12,12 +12,12 @@ use ratatui::{
 use std::io::stdout;
 
 mod app;
+mod db;
 mod key_events;
 mod local_data;
 mod todo;
-mod db;
 
-use crate::app::{View, App};
+use crate::app::{App, View};
 use crate::key_events::*;
 
 fn main() -> Result<()> {

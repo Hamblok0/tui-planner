@@ -1,4 +1,3 @@
-use crossterm::event::KeyEvent;
 use tui_textarea::{Input, Key};
 
 use crate::app::*;

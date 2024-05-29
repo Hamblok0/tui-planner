@@ -64,7 +64,7 @@ impl ToDoState {
 
     pub fn next(&mut self) {
         if self.items.len() == 0 {
-            return
+            return;
         }
 
         let i = match self.state.selected() {
@@ -82,7 +82,7 @@ impl ToDoState {
 
     pub fn previous(&mut self) {
         if self.items.len() == 0 {
-            return
+            return;
         }
 
         let i = match self.state.selected() {
@@ -112,9 +112,9 @@ impl ToDoState {
         }
     }
 
-    pub fn create_task(&mut self, db: &DB, title: String, description: String) {    
+    pub fn create_task(&mut self, db: &DB, title: String, description: String) {
         let id = db.create_todo(&title, &description).unwrap();
-        
+
         self.items.push(ToDoItem {
             id,
             title,
@@ -134,15 +134,15 @@ impl ToDoState {
             None => {}
         }
     }
-    pub fn overwrite_task(&mut self, db:&DB, title: String, description: String) {
+    pub fn overwrite_task(&mut self, db: &DB, title: String, description: String) {
         match self.state.selected() {
             Some(i) => {
-                let todo: &mut ToDoItem = &mut self.items[i]; 
+                let todo: &mut ToDoItem = &mut self.items[i];
                 let old_todo = ToDoItem {
                     id: todo.id.clone(),
                     title: todo.title.clone(),
                     description: todo.description.clone(),
-                    complete: todo.complete.clone()
+                    complete: todo.complete.clone(),
                 };
 
                 if title != todo.title {
