@@ -29,12 +29,6 @@ impl DB {
             )
             .unwrap();
         }
-        // let data: Vec<ToDoItem> = load_session().unwrap();
-        // let iter = data.iter();
-
-        // for todo in iter {
-        //     db.execute("INSERT INTO todos (title, description, complete) VALUES (?1, ?2, ?3)", (&todo.title, &todo.description, &todo.complete)).unwrap();
-        // }
 
         Self { db }
     }
