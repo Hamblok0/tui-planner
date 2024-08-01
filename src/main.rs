@@ -9,7 +9,7 @@ use ratatui::{
     prelude::{Color, CrosstermBackend, Layout, Style, Terminal},
     widgets::*,
 };
-use std::io::stdout;
+use std::io::{stdout, Write};
 
 mod app;
 mod db;
@@ -27,6 +27,15 @@ fn main() -> Result<()> {
     let mut terminal = Terminal::new(CrosstermBackend::new(stdout()))?;
     let mut app = App::new();
 
+    render(&mut app, &mut terminal); 
+
+    execute!(stdout(), LeaveAlternateScreen)?;
+    disable_raw_mode()?;
+
+    Ok(())
+}
+
+fn render<W: Write>(app: &mut App, terminal: &mut Terminal<CrosstermBackend<W>>) {
     loop {
         terminal.draw(|f| {
             let items: Vec<ListItem> = app
@@ -65,15 +74,10 @@ fn main() -> Result<()> {
                 }
                 _ => (),
             }
-        })?;
+        }).unwrap();
 
-        if let Some(_) = key_events(&mut app) {
+        if let Some(_) = key_events(app) {
             break;
         }
     }
-
-    execute!(stdout(), LeaveAlternateScreen)?;
-    disable_raw_mode()?;
-
-    Ok(())
 }
