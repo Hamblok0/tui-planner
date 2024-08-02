@@ -27,7 +27,7 @@ fn main() -> Result<()> {
     let mut terminal = Terminal::new(CrosstermBackend::new(stdout()))?;
     let mut app = App::new();
 
-    render(&mut app, &mut terminal); 
+    render(&mut app, &mut terminal)?; 
 
     execute!(stdout(), LeaveAlternateScreen)?;
     disable_raw_mode()?;
@@ -35,7 +35,7 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn render<W: Write>(app: &mut App, terminal: &mut Terminal<CrosstermBackend<W>>) {
+fn render<W: Write>(app: &mut App, terminal: &mut Terminal<CrosstermBackend<W>>) -> Result<()> {
     loop {
         terminal.draw(|f| {
             match app.view {
@@ -75,10 +75,10 @@ fn render<W: Write>(app: &mut App, terminal: &mut Terminal<CrosstermBackend<W>>)
                 }
                 _ => (),
             }
-        }).unwrap();
+        })?;
 
         if let Some(_) = key_events(app) {
-            break;
+            return Ok(())
         }
     }
 }
