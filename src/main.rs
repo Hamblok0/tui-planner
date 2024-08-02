@@ -38,29 +38,30 @@ fn main() -> Result<()> {
 fn render<W: Write>(app: &mut App, terminal: &mut Terminal<CrosstermBackend<W>>) {
     loop {
         terminal.draw(|f| {
-            let items: Vec<ListItem> = app
-                .todo
-                .items
-                .iter()
-                .map(|i| match i.complete {
-                    true => {
-                        return ListItem::new(&*i.title)
-                            .style(Style::default().add_modifier(Modifier::CROSSED_OUT))
-                    }
-                    false => return ListItem::new(&*i.title),
-                })
-                .collect();
-
-            let area = f.size();
-
-            let list = List::new(items)
-                .block(Block::default().borders(Borders::ALL).title("To Do"))
-                .highlight_style(Style::default().bg(Color::LightGreen))
-                .highlight_symbol(">> ");
-
-            f.render_stateful_widget(list, area, &mut app.todo.state);
-
             match app.view {
+                View::Todo => {
+                    let items: Vec<ListItem> = app
+                        .todo
+                        .items
+                        .iter()
+                        .map(|i| match i.complete {
+                            true => {
+                                return ListItem::new(&*i.title)
+                                    .style(Style::default().add_modifier(Modifier::CROSSED_OUT))
+                            }
+                            false => return ListItem::new(&*i.title),
+                        })
+                        .collect();
+
+                    let area = f.size();
+
+                    let list = List::new(items)
+                        .block(Block::default().borders(Borders::ALL).title("To Do"))
+                        .highlight_style(Style::default().bg(Color::LightGreen))
+                        .highlight_symbol(">> ");
+
+                    f.render_stateful_widget(list, area, &mut app.todo.state);
+                }
                 View::Modal(ref modal) => {
                     let area = modal.get_center(f.size());
                     let layout = Layout::new(

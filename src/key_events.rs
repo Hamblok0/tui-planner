@@ -69,7 +69,7 @@ pub fn key_events(app: &mut App) -> Option<usize> {
                     },
                     _ => {}
                 },
-                View::Main => match key.code {
+                View::Todo => match key.code {
                     crossterm::event::KeyCode::Char('q') => return Some(0),
                     crossterm::event::KeyCode::Char('c') => app.todo.toggle_complete(&app.db),
                     crossterm::event::KeyCode::Char('j') => app.todo.next(),

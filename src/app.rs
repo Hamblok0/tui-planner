@@ -6,7 +6,8 @@ use crate::local_data::load_session;
 use crate::todo::*;
 
 pub enum View<'a> {
-    Main,
+    Todo,
+    Timer,
     Modal(ToDoModal<'a>),
 }
 
@@ -27,7 +28,7 @@ impl<'a> App<'a> {
 
         App {
             todo: ToDoState::new(items),
-            view: View::Main,
+            view: View::Todo,
             db,
         }
     }
@@ -122,7 +123,7 @@ impl<'a> App<'a> {
                     panic!("Error: ToDoItem did not return a value")
                 }
             },
-            _ => View::Main,
+            _ => View::Todo,
         }
     }
 }
